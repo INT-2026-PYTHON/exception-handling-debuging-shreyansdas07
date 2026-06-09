@@ -63,3 +63,44 @@ Calculation finished
 =================================================
 
 """
+def safe_divide(numerator_str, denominator_str):
+    try:
+        numerator = float(numerator_str)
+        denominator = float(denominator_str)
+    except ValueError:
+        return ("error", "Non-numeric input provided.")
+    
+    try:
+        result = numerator / denominator
+        return ("ok", result)
+    except ZeroDivisionError:
+        return ("error", "Division by zero is not allowed.")
+    except Exception as e:
+        return ("error", f"An unexpected error occurred: {e}")
+
+print("-- - Testing safe_divide ---")
+
+num1 = input("Enter the numerator for a valid division: ")
+denom1 = input("Enter the denominator for a valid division: ")
+result1 = safe_divide(num1, denom1)
+print(f"Result of {num1} / {denom1}: {result1}")
+
+num2 = input("Enter the numerator for division by zero: ")
+denom2 = input("Enter the denominator for division by zero: ")
+result2 = safe_divide(num2, denom2)
+print(f"Result of {num2} / {denom2}: {result2}")
+
+num3 = input("Enter non-numeric numerator: ")
+denom3 = input("Enter a numeric denominator: ")
+result3 = safe_divide(num3, denom3)
+print(f"Result of {num3} / {denom3}: {result3}")
+
+num4 = input("Enter a numeric numerator: ")
+denom4 = input("Enter non-numeric denominator: ")
+result4 = safe_divide(num4, denom4)
+print(f"Result of {num4} / {denom4}: {result4}")
+
+num5 = input("Enter the numerator: ")
+denom5 = input("Enter the denominator: ")
+result5 = safe_divide(num5, denom5)
+print(f"Result of {num5} / {denom5}: {result5}")
