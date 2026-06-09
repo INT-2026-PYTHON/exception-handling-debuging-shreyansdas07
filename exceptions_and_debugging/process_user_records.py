@@ -137,3 +137,62 @@ Explanation:
 =================================================
 
 """
+import json
+
+def process_records(records):
+    clean_records = []
+    error_log = []
+
+    for index, record in enumerate(records):
+        try:
+            name = record["name"]
+            age_str = record["age"]
+            score_str = record["score"]
+
+            age = int(age_str)
+            score = float(score_str)
+
+        except (KeyError, TypeError) as e:
+            error_log.append((index, type(e).__name__, str(e)))
+        except ValueError as e:
+            error_log.append((index, type(e).__name__, str(e)))
+        else:
+            clean_records.append({
+                "name": name,
+                "age": age,
+                "score": score
+            })
+    return clean_records, error_log
+
+def process_strict(records):
+    clean_records, error_log = process_records(records)
+    if error_log:
+        num_failures = len(error_log)
+        raise RuntimeError(f"{num_failures} record(s) failed validation.") from None
+    return clean_records, error_log
+
+print("--- Testing process_records with user input ---")
+user_input_messy_str = input("Enter a JSON string representing a list of records : ")
+try:
+    messy_records_from_user = json.loads(user_input_messy_str)
+    clean_records_output, error_log_output = process_records(messy_records_from_user)
+    print("Clean Records:")
+    print(clean_records_output)
+    print("\nError Log:")
+    print(error_log_output)
+except Exception as e:
+    print(f"An unexpected error occurred during processing: {e}")
+
+print("\n--- Testing process_strict with user input ---")
+user_input_strict_str = input("Enter a JSON string for records to be processed strictly: ")
+try:
+    strict_records_from_user = json.loads(user_input_strict_str)
+    strict_clean_output, strict_error_log_output = process_strict(strict_records_from_user)
+    print("Strict Clean Records:")
+    print(strict_clean_output)
+    print("\nStrict Error Log:")
+    print(strict_error_log_output)
+except RuntimeError as e:
+    print(f"Caught RuntimeError: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred during strict processing: {e}")

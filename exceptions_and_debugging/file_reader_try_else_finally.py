@@ -124,3 +124,46 @@ Explanation:
 =================================================
 
 """
+def read_numbers(path):
+    current_sum = 0.0
+    successfully_parsed_lines = 0
+    try:
+        with open(path, 'r') as f:
+            for line_idx, line in enumerate(f):
+                try:
+                    number = float(line.strip())
+                    current_sum += number
+                    successfully_parsed_lines += 1
+                except ValueError:
+                    return ("error", f"Invalid number format at line {successfully_parsed_lines + 1}.", successfully_parsed_lines)
+    except FileNotFoundError:
+        return ("error", "File not found.", successfully_parsed_lines)
+    except PermissionError:
+        return ("error", "Permission denied to read file.", successfully_parsed_lines)
+    except Exception as e:
+        return ("error", f"An unexpected error occurred: {e}", successfully_parsed_lines)
+    else:
+        return ("ok", current_sum, successfully_parsed_lines)
+    finally:
+        print("Done reading.")
+import os
+with open('numbers.txt', 'w') as f:
+    f.write('10.5\n')
+    f.write('20\n')
+    f.write('30.25\n')
+print("Created 'numbers.txt'")
+with open('bad_numbers.txt', 'w') as f:
+    f.write('1\n')
+    f.write('2\n')
+    f.write('not_a_number\n')
+    f.write('3\n')
+print("Created 'bad_numbers.txt'")
+if not os.path.exists('no_permission_dir'):
+    os.makedirs('no_permission_dir')
+print("Created 'no_permission_dir' to simulate permission error (by attempting to open a directory).")
+with open('empty.txt', 'w') as f:
+    pass
+print("Created 'empty.txt'")
+file_path = input("Enter the file path to read: ")
+result = read_numbers(file_path)
+print(f"Result: {result}")

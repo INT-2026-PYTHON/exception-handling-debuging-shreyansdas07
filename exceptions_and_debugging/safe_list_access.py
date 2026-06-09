@@ -77,3 +77,41 @@ Output Example 3:
 =================================================
 
 """
+import json
+
+def safe_get(items, index):
+    try:
+        value = items[index]
+        return ("ok", value)
+    except IndexError:
+        return ("error", "Index out of range")
+    except TypeError:
+        return ("error", "Index must be an int")
+    except Exception as e:
+        return ("error", f"Unexpected error: {e}")
+
+full_user_input = input("Enter a JSON string for a list and an index, separated by a comma (e.g., '[1, 2, 3]', 1): ")
+
+try:
+    # Find the last comma to separate the list JSON string from the index
+    last_comma_index = full_user_input.rfind(',')
+    if last_comma_index == -1:
+        raise ValueError("Input must contain a comma separating the list and index.")
+
+    user_list_str = full_user_input[:last_comma_index].strip()
+    user_index_str = full_user_input[last_comma_index + 1:].strip()
+
+    my_list_from_user = json.loads(user_list_str)
+
+    try:
+        user_index = int(user_index_str)
+    except ValueError:
+        user_index = user_index_str
+
+    result = safe_get(my_list_from_user, user_index)
+    print(f"Result for list {my_list_from_user} at index {user_index_str}: {result}")
+
+except ValueError as ve:
+    print(f"Input format error: {ve}")
+except Exception as e:
+    print(f"An unexpected error occurred during processing: {e}")
